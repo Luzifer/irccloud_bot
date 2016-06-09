@@ -134,6 +134,14 @@ func (i *IRCCloudBot) Say(connectionID int, target, message string) error {
 	})
 }
 
+// Nick changes the own nickname on the specified connection ID
+func (i *IRCCloudBot) Nick(connectionID int, nick string) error {
+	return i.authenticatedPost("/chat/nick", url.Values{
+		"cid":  []string{strconv.Itoa(connectionID)},
+		"nick": []string{nick},
+	})
+}
+
 // RegisterMessageHandler registers a new handler for eventType events
 // Please note:
 //   - Events handled with these handlers are not anymore sent to Events() stream
