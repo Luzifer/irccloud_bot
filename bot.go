@@ -106,7 +106,11 @@ func (i *IRCCloudBot) Start() {
 	i.idleContextTimeout = time.AfterFunc(idleTimeout, i.idleContextCancel)
 
 	go func() {
-		if err := i.listenAndParseEvents(); err != nil {
+		err := i.listenAndParseEvents()
+
+		if i.parentContext.Err() == nil && i.AutoReconnect {
+			i.Start()
+		} else {
 			i.errChan <- err
 		}
 	}()
