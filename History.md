@@ -1,3 +1,7 @@
+# 1.2.0 / 2016-06-10
+
+  * Stop listen loop when message handler returned error
+
 # 1.1.1 / 2016-06-10
 
   * Fix: Wrong type to return
