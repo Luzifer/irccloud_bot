@@ -72,7 +72,7 @@ func New(email, password string) (*IRCCloudBot, error) {
 // WithContext creates an IRCCloudBot instance with explicit set context and tries to log into IRCCloud with it
 func WithContext(ctx context.Context, email, password string) (*IRCCloudBot, error) {
 	i := &IRCCloudBot{
-		HTTPClient:          http.DefaultClient,
+		HTTPClient:          &http.Client{},
 		AutoReconnect:       true,
 		YieldInternalEvents: false,
 		DropUnhandledEvents: false,
