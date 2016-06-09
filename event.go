@@ -58,7 +58,7 @@ func (e Event) Str(attributeName string) (string, error) {
 func (e Event) Bool(attributeName string) (bool, error) {
 	v, ok := e[attributeName].(bool)
 	if !ok {
-		return "", errors.New("Field was not of expected type")
+		return false, errors.New("Field was not of expected type")
 	}
 	return v, nil
 }
