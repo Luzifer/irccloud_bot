@@ -25,23 +25,6 @@ var (
 	internalMessageHandlers = make(map[string]EventHandler)
 )
 
-// Event contains a message from IRCCloud as an interface map
-// For a list of events see https://github.com/irccloud/irccloud-tools/wiki/API-Stream-Message-Reference
-type Event map[string]interface{}
-
-// Conn returns the IRCCloudBot object the message was received with
-func (e Event) Conn() *IRCCloudBot {
-	return e["_conn"].(*IRCCloudBot)
-}
-
-// Reply is a shorthand to Event.Conn().Say(...) to send to the same channel the message was received from
-func (e Event) Reply(message string) error {
-	if e["type"] != "buffer_msg" {
-		return fmt.Errorf("Cannot reply to type '%s'", e["type"].(string))
-	}
-	return e.Conn().Say(int(e["cid"].(float64)), e["chan"].(string), message)
-}
-
 // EventHandler is a type of function which can be registered as a handler for specific types of events
 type EventHandler func(Event) error
 
