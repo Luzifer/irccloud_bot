@@ -199,7 +199,9 @@ func (i *IRCCloudBot) listenAndParseEvents() error {
 		if !internallyHandled || i.YieldInternalEvents {
 			if ehs, ok := i.eventHandlers[e["type"].(string)]; ok && len(ehs) > 0 {
 				for _, eh := range ehs {
-					eh(e)
+					if err := eh(e); err != nil {
+						return err
+					}
 				}
 			} else {
 				if !i.DropUnhandledEvents {
