@@ -1,3 +1,7 @@
+# 1.1.1 / 2016-06-10
+
+  * Fix: Wrong type to return
+
 # 1.1.0 / 2016-06-10
 
   * Added helper functions for easier usage of events
