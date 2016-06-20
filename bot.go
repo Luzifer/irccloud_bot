@@ -99,6 +99,13 @@ func (i *IRCCloudBot) Start() {
 	}()
 }
 
+// Reconnect reconnects a disconnected connection
+func (i *IRCCloudBot) Reconnect(connectionID int) error {
+	return i.authenticatedPost("/chat/reconnect", url.Values{
+		"cid": []string{strconv.Itoa(connectionID)},
+	})
+}
+
 // Join joins a channel on the specified connection ID
 func (i *IRCCloudBot) Join(connectionID int, channel string) error {
 	return i.authenticatedPost("/chat/join", url.Values{
