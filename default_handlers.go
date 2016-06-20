@@ -1,7 +1,7 @@
 package bot
 
 import (
-	"bufio"
+	"encoding/json"
 	"fmt"
 
 	"golang.org/x/net/context/ctxhttp"
@@ -20,11 +20,14 @@ func handleOOBInclude(evt Event) error {
 	}
 	defer res.Body.Close()
 
-	lr := bufio.NewScanner(res.Body)
-	for lr.Scan() {
-		if err := i.handleEvent(lr.Bytes(), true); err != nil {
-			return err
-		}
+	r := []Event{}
+	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+		return err
+	}
+
+	for _, e := range r {
+		e["_from_backlog"] = true
+		i.eventChan <- e
 	}
 
 	return nil
