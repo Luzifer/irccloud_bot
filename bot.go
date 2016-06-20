@@ -206,7 +206,7 @@ func (i *IRCCloudBot) handleEvent(line []byte, isBacklog bool) error {
 	}
 	if err := json.Unmarshal(line, &e); err != nil {
 		log.Printf("Got unparsable message: %s", string(line))
-		return
+		return nil
 	}
 
 	ih, internallyHandled := internalMessageHandlers[e["type"].(string)]
