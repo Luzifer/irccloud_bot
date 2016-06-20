@@ -1,3 +1,7 @@
+# 1.4.0 / 2016-06-20
+
+  * Allow parsing messages from the backlog
+
 # 1.3.0 / 2016-06-10
 
   * Added command to change nickname
