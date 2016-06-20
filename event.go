@@ -14,6 +14,11 @@ func (e Event) Conn() *IRCCloudBot {
 	return e["_conn"].(*IRCCloudBot)
 }
 
+// FromBacklog indicates whether the message was fetched from the backlog or from the stream
+func (e Event) FromBacklog() bool {
+	return e["_from_backlog"].(bool)
+}
+
 // Reply is a shorthand to Event.Conn().Say(...) to send to the same channel the message was received from
 func (e Event) Reply(message string) error {
 	if e["type"] != "buffer_msg" {

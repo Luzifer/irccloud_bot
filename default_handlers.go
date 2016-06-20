@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"bufio"
 	"fmt"
 
 	"golang.org/x/net/context/ctxhttp"
@@ -17,7 +18,15 @@ func handleOOBInclude(evt Event) error {
 	if err != nil {
 		return fmt.Errorf("Could not fetch oob_include: %s", err)
 	}
-	res.Body.Close()
+	defer res.Body.Close()
+
+	lr := bufio.NewScanner(res.Body)
+	for lr.Scan() {
+		if err := i.handleEvent(lr.Bytes(), true); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

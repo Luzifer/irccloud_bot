@@ -187,39 +187,47 @@ func (i *IRCCloudBot) listenAndParseEvents() error {
 
 	lr := bufio.NewScanner(res.Body)
 	for lr.Scan() {
-		e := Event{
-			"_conn": i,
+		if err := i.handleEvent(lr.Bytes(), false); err != nil {
+			return err
 		}
-		if err := json.Unmarshal(lr.Bytes(), &e); err != nil {
-			log.Printf("Got unparsable message: %s", lr.Text())
-			continue
-		}
-
 		i.idleContextTimeout.Reset(idleTimeout)
-
-		ih, internallyHandled := internalMessageHandlers[e["type"].(string)]
-		if internallyHandled {
-			if err := ih(e); err != nil {
-				return err
-			}
-		}
-
-		if !internallyHandled || i.YieldInternalEvents {
-			if ehs, ok := i.eventHandlers[e["type"].(string)]; ok && len(ehs) > 0 {
-				for _, eh := range ehs {
-					if err := eh(e); err != nil {
-						return err
-					}
-				}
-			} else {
-				if !i.DropUnhandledEvents {
-					i.eventChan <- e
-				}
-			}
-		}
 	}
 	if err := lr.Err(); err != nil {
 		return fmt.Errorf("Encountered error while reading the stream: %s", err)
+	}
+
+	return nil
+}
+
+func (i *IRCCloudBot) handleEvent(line []byte, isBacklog bool) error {
+	e := Event{
+		"_conn":         i,
+		"_from_backlog": isBacklog,
+	}
+	if err := json.Unmarshal(line, &e); err != nil {
+		log.Printf("Got unparsable message: %s", string(line))
+		return
+	}
+
+	ih, internallyHandled := internalMessageHandlers[e["type"].(string)]
+	if internallyHandled {
+		if err := ih(e); err != nil {
+			return err
+		}
+	}
+
+	if !internallyHandled || i.YieldInternalEvents {
+		if ehs, ok := i.eventHandlers[e["type"].(string)]; ok && len(ehs) > 0 {
+			for _, eh := range ehs {
+				if err := eh(e); err != nil {
+					return err
+				}
+			}
+		} else {
+			if !i.DropUnhandledEvents {
+				i.eventChan <- e
+			}
+		}
 	}
 
 	return nil
