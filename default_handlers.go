@@ -2,6 +2,7 @@ package bot
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 
 	"golang.org/x/net/context/ctxhttp"
@@ -25,7 +26,7 @@ func handleOOBInclude(evt Event) error {
 		if lr.Text() == "[" || lr.Text() == "]" {
 			continue
 		}
-		i.handleEvent(lr.Bytes(), true)
+		i.handleEvent(bytes.Trim(lr.Bytes(), ","), true)
 	}
 
 	return nil
